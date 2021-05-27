@@ -38,3 +38,5 @@ def show(id):
 
 **ReDoc**  
 `http://127.0.0.1:8000/redoc`
+
+Path parameter, Query Parameter, Optional Parameter

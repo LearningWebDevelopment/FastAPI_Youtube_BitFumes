@@ -2,15 +2,19 @@
 Created to learn FastAPI
 """
 
+from typing import Optional
 from fastapi import FastAPI
 
 # Create instance of FastAPI
 app = FastAPI()
 
 
-@app.get('/')
-def index():
-    return {'data': 'Blog List'}
+@app.get('/blog')
+def index(limit: int = 10, published: bool = False, sort: Optional[str] = None):
+    if published:
+        return {'data': 'Published Blogs only'}
+    elif limit:
+        return {'data': f'Blog List Limited to {limit}'}
 
 
 @app.get('/blog/unpublished')
