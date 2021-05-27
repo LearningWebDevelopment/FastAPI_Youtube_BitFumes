@@ -29,4 +29,12 @@ def show(id):
     return {
         'data': id
     }
-```
+```  
+
+### API Docs  
+
+**Swagger Doc**
+`http://127.0.0.1:8000/docs`  
+
+**ReDoc**  
+`http://127.0.0.1:8000/redoc`
