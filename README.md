@@ -16,3 +16,17 @@ Create a file **main.py**
 ### Run Server
 
 `uvicorn main:app --reload`
+
+@app.get('/') - path operation decorator
+app name - operation - path
+path operation function
+
+#### Dynamic Routing
+
+```python
+@app.get('/blog/{id}')
+def show(id):
+    return {
+        'data': id
+    }
+```
