@@ -40,3 +40,5 @@ def show(id):
 `http://127.0.0.1:8000/redoc`
 
 Path parameter, Query Parameter, Optional Parameter
+
+Post requires a data model and function parameter is model instance

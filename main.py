@@ -4,9 +4,16 @@ Created to learn FastAPI
 
 from typing import Optional
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 # Create instance of FastAPI
 app = FastAPI()
+
+
+class Blog(BaseModel):
+    title: str
+    body: str
+    published : Optional[bool]
 
 
 @app.get('/blog')
@@ -30,3 +37,8 @@ def show(id: int):
 @app.get('/blog/{id}/comments')
 def comments(id):
     return {'data': {'1': 'comment 1', '2': 'comment 2'}}
+
+
+@app.post('/blog')
+def create_blog(request_blog: Blog):
+    return {'data': f'Blog is Created with title {request_blog.title}'}
