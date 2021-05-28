@@ -57,3 +57,9 @@ Run:
 
 [SQL_Alchemy Link](https://docs.sqlalchemy.org/en/14/tutorial/engine.html)
 Create connection to DB SQLite
+
+### Model & Table  
+
+1. created database.py - connection to db
+2. models.py - table name and structure
+3. main.py - model db creation
