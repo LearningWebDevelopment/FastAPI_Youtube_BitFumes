@@ -65,3 +65,5 @@ Create connection to DB SQLite
 3. main.py - model db creation
 
 #### Store data to DB
+
+### Exception & Status Code
