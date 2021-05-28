@@ -5,6 +5,7 @@ Created to learn FastAPI
 from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
+import uvicorn
 
 # Create instance of FastAPI
 app = FastAPI()
@@ -42,3 +43,7 @@ def comments(id):
 @app.post('/blog')
 def create_blog(request_blog: Blog):
     return {'data': f'Blog is Created with title {request_blog.title}'}
+
+if __name__ == "__main__":
+    #python3 main.py
+    uvicorn.run(app, host="127.0.0.1", port=8082)

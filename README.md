@@ -42,3 +42,13 @@ def show(id):
 Path parameter, Query Parameter, Optional Parameter
 
 Post requires a data model and function parameter is model instance
+
+### Change Port
+
+```python
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+```
+
+Run:
+`python3 main.py`
