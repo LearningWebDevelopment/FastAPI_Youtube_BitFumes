@@ -19,9 +19,22 @@ def get_db():
 
 
 @app.post('/blog')
-def create(request: BlogSchema, db: Session = Depends(get_db)):
+def createBlog(request: BlogSchema, db: Session = Depends(get_db)):
     new_blog = BlogModel(title=request.title, body=request.body)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
     return new_blog
+
+
+@app.get('/blog')
+def getAllBlog(db: Session = Depends(get_db)):
+    blogs = db.query(BlogModel).all()
+    return blogs
+
+
+@app.get('/blog/{id}')
+def getBlog(id: int, db: Session = Depends(get_db)):
+    #blog = db.query(BlogModel).get(id)
+    blog = db.query(BlogModel).filter(BlogModel.id == id).first()
+    return blog
