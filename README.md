@@ -52,3 +52,8 @@ if __name__ == "__main__":
 
 Run:
 `python3 main.py`
+
+### Pydantic Schema & SQL Alchemy
+
+[SQL_Alchemy Link](https://docs.sqlalchemy.org/en/14/tutorial/engine.html)
+Create connection to DB SQLite
