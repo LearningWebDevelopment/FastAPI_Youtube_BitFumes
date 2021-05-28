@@ -63,3 +63,5 @@ Create connection to DB SQLite
 1. created database.py - connection to db
 2. models.py - table name and structure
 3. main.py - model db creation
+
+#### Store data to DB
