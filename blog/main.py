@@ -100,3 +100,34 @@ def create_user(request: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@app.get('/user', status_code=200, response_model=List[UserDetail])
+def get_all_user(db: Session = Depends(get_db)):
+    users = db.query(UserModel).all()
+    if not users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Users not Found!!!")
+    return users
+
+
+@app.get('/user/{id}', status_code=200, response_model=UserDetail)
+def get_user(id: int, db: Session = Depends(get_db)):
+    user = db.query(UserModel).get(id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not Found!!!")
+    return user
+
+
+@app.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(id: int, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(
+        UserModel.id == id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not Found!!!")
+    db.query(UserModel).filter(UserModel.id ==
+                               id).delete(synchronize_session=False)
+    db.commit()
+    return {'detail': 'User Destroyed'}
