@@ -1,8 +1,9 @@
+from typing import List
 from fastapi import FastAPI, Depends, status, Response, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from .schemas import BlogSchema, ShowBlogSchema
+from .schemas import BlogSchema, ShowBlogSchema, ShowBlogTitle
 from .models import Base, BlogModel
 from .database import engine, SessionLocal
 
@@ -48,7 +49,7 @@ def deleteBlog(id: int, db: Session = Depends(get_db)):
     if not blog:
         raise HTTPException(
             status_code=404, detail=f"User {id} not found")
-    #blog.delete(synchronize_session=False)
+    # blog.delete(synchronize_session=False)
     return Response(status_code=204)
 
 
@@ -66,13 +67,13 @@ def updateBlog(id: int, request: BlogSchema, db: Session = Depends(get_db)):
     db.query(BlogModel).filter(BlogModel.id == id).update(
         vars(request),
         synchronize_session=False)
-    #blog.update(vars(request))
+    # blog.update(vars(request))
     db.commit()
 
     return f"Blog {id} Updated"
 
 
-@app.get('/blog')
+@app.get('/blog', response_model=List[ShowBlogTitle])
 def getAllBlog(db: Session = Depends(get_db)):
     blogs = db.query(BlogModel).all()
     return blogs
