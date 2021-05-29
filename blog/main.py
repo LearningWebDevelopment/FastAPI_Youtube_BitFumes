@@ -3,9 +3,10 @@ from fastapi import FastAPI, Depends, status, Response, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from .schemas import BlogSchema, ShowBlogSchema, ShowBlogTitle
-from .models import Base, BlogModel
+from .schemas import BlogSchema, ShowBlogSchema, ShowBlogTitle, UserDetail, UserCreate
+from .models import Base, BlogModel, UserModel
 from .database import engine, SessionLocal
+from .hashing import Hash
 
 app = FastAPI()
 
@@ -89,3 +90,13 @@ def getBlog(id: int, response: Response, db: Session = Depends(get_db)):
         #response.status_code = status.HTTP_404_NOT_FOUND
         # return {'error': 'Blog not found!!!'}
     return blog
+
+
+@app.post('/user', status_code=status.HTTP_201_CREATED, response_model=UserDetail)
+def create_user(request: UserCreate, db: Session = Depends(get_db)):
+    request.password = Hash.hash_pass(request.password)
+    new_user = UserModel(**request.dict())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
