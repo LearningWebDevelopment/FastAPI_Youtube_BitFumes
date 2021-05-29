@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, status, Response, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from .schemas import BlogSchema
+from .schemas import BlogSchema, ShowBlogSchema
 from .models import Base, BlogModel
 from .database import engine, SessionLocal
 
@@ -78,7 +78,7 @@ def getAllBlog(db: Session = Depends(get_db)):
     return blogs
 
 
-@app.get('/blog/{id}', status_code=200)
+@app.get('/blog/{id}', status_code=200, response_model=ShowBlogSchema)
 def getBlog(id: int, response: Response, db: Session = Depends(get_db)):
     #blog = db.query(BlogModel).get(id)
     blog = db.query(BlogModel).filter(BlogModel.id == id).first()
