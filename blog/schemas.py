@@ -1,6 +1,4 @@
-
-
-from turtle import title
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -33,6 +31,14 @@ class UserCreate(UserBase):
 
 class UserDetail(UserBase):
     id: int
+
+    class Config():
+        orm_mode = True
+
+
+class UserUpdate(UserBase):
+    name:  Optional[str] = None
+    email:  Optional[str] = None
 
     class Config():
         orm_mode = True
