@@ -7,16 +7,19 @@ from blog.database import get_db
 from blog.models import BlogModel
 from blog.schemas import BlogSchema, ShowBlogSchema, ShowBlogTitle
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/blog",
+    tags=['Blogs']
+)
 
 
-@router.get('/blog', response_model=List[ShowBlogTitle], tags=['blogs'])
+@router.get('/', response_model=List[ShowBlogTitle])
 def get_All_Blog(db: Session = Depends(get_db)):
     blogs = db.query(BlogModel).all()
     return blogs
 
 
-@router.post('/blog', status_code=status.HTTP_201_CREATED, tags=['blogs'])
+@router.post('/', status_code=status.HTTP_201_CREATED)
 def create_Blog(request: BlogSchema, db: Session = Depends(get_db)):
     new_blog = BlogModel(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
@@ -26,12 +29,12 @@ def create_Blog(request: BlogSchema, db: Session = Depends(get_db)):
 
 
 @router.delete(
-    '/blog/{id}',
+    '/{id}',
     response_class=Response,
     responses={
         204: {"description": "Blog successfully deleted"},
         404: {"description": "Topic not found"},
-    }, tags=['blogs']
+    }
 )
 def delete_Blog(id: int, db: Session = Depends(get_db)):
     blog = db.query(BlogModel).filter(
@@ -44,7 +47,7 @@ def delete_Blog(id: int, db: Session = Depends(get_db)):
     return Response(status_code=204)
 
 
-@router.put('/blog/{id}', status_code=status.HTTP_202_ACCEPTED, tags=['blogs'])
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update_Blog(id: int, request: BlogSchema, db: Session = Depends(get_db)):
     #blog = db.query(BlogModel).filter(BlogModel.id == id)
     blog = db.query(BlogModel).get(id)
@@ -64,7 +67,7 @@ def update_Blog(id: int, request: BlogSchema, db: Session = Depends(get_db)):
     return f"Blog {id} Updated"
 
 
-@router.get('/blog/{id}', status_code=200, response_model=List[ShowBlogTitle], tags=['blogs'])
+@router.get('/{id}', status_code=200, response_model=List[ShowBlogTitle])
 def get_Blog(id: int, response: Response, db: Session = Depends(get_db)):
     #blog = db.query(BlogModel).get(id)
     blog = db.query(BlogModel).filter(BlogModel.id == id).all()

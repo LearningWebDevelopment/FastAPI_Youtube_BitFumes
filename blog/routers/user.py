@@ -8,10 +8,13 @@ from blog.hashing import Hash
 from blog.models import UserModel
 from blog.schemas import UserBase, UserCreate, UserDetail, UserUpdate
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/user",
+    tags=["Users"]
+)
 
 
-@router.post('/user', status_code=status.HTTP_201_CREATED, response_model=UserDetail, tags=['User'])
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=UserDetail)
 def create_user(request: UserCreate, db: Session = Depends(get_db)):
     request.password = Hash.hash_pass(request.password)
     new_user = UserModel(**request.dict())
@@ -21,7 +24,7 @@ def create_user(request: UserCreate, db: Session = Depends(get_db)):
     return new_user
 
 
-@router.get('/user', status_code=200, response_model=List[UserDetail], tags=['User'])
+@router.get('/', status_code=200, response_model=List[UserDetail])
 def get_all_user(db: Session = Depends(get_db)):
     users = db.query(UserModel).all()
     if not users:
@@ -30,7 +33,7 @@ def get_all_user(db: Session = Depends(get_db)):
     return users
 
 
-@router.get('/user/{id}', status_code=200, response_model=UserDetail, tags=['User'])
+@router.get('/{id}', status_code=200, response_model=UserDetail)
 def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(UserModel).get(id)
     if not user:
@@ -39,7 +42,7 @@ def get_user(id: int, db: Session = Depends(get_db)):
     return user
 
 
-@router.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT, tags=['User'])
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
 def delete_user(id: int, db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(
         UserModel.id == id).first()
@@ -52,7 +55,7 @@ def delete_user(id: int, db: Session = Depends(get_db)):
     return {'detail': 'User Destroyed'}
 
 
-@router.patch('/user/{id}', status_code=status.HTTP_206_PARTIAL_CONTENT, response_model=UserUpdate, tags=['User'])
+@router.patch('/{id}', status_code=status.HTTP_206_PARTIAL_CONTENT, response_model=UserUpdate)
 def partially_update_user(id: int, request: UserUpdate, db: Session = Depends(get_db)):
     user = db.query(UserModel).get(id)
     if not user:
@@ -72,7 +75,7 @@ def partially_update_user(id: int, request: UserUpdate, db: Session = Depends(ge
     return updated_model
 
 
-@router.put('/user/{id}', status_code=status.HTTP_205_RESET_CONTENT, response_model=UserBase, tags=['User'])
+@router.put('/{id}', status_code=status.HTTP_205_RESET_CONTENT, response_model=UserBase)
 def update_user(id: int, request: UserBase, db: Session = Depends(get_db)):
     user = db.query(UserModel).get(id)
     if not user:
