@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel
 
 
@@ -6,8 +6,6 @@ class BlogSchema(BaseModel):
     title: str
     body: str
 
-
-class ShowBlogSchema(BlogSchema):
     class Config():
         orm_mode = True
 
@@ -31,6 +29,7 @@ class UserCreate(UserBase):
 
 class UserDetail(UserBase):
     id: int
+    blogs: List[BlogSchema] = []
 
     class Config():
         orm_mode = True
@@ -39,6 +38,13 @@ class UserDetail(UserBase):
 class UserUpdate(UserBase):
     name:  Optional[str] = None
     email:  Optional[str] = None
+
+    class Config():
+        orm_mode = True
+
+
+class ShowBlogSchema(BlogSchema):
+    author: UserDetail
 
     class Config():
         orm_mode = True

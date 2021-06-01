@@ -67,3 +67,5 @@ Create connection to DB SQLite
 #### Store data to DB
 
 ### Exception & Status Code
+
+### Relationship

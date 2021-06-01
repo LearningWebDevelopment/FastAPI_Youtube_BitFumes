@@ -28,7 +28,7 @@ def get_db():
 # @app.post('/blog', status_code=201)
 @app.post('/blog', status_code=status.HTTP_201_CREATED, tags=['blogs'])
 def create_Blog(request: BlogSchema, db: Session = Depends(get_db)):
-    new_blog = BlogModel(title=request.title, body=request.body)
+    new_blog = BlogModel(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
     db.commit()
     db.refresh(new_blog)
@@ -80,10 +80,10 @@ def get_All_Blog(db: Session = Depends(get_db)):
     return blogs
 
 
-@app.get('/blog/{id}', status_code=200, response_model=ShowBlogSchema, tags=['blogs'])
+@app.get('/blog/{id}', status_code=200, response_model=List[ShowBlogSchema], tags=['blogs'])
 def get_Blog(id: int, response: Response, db: Session = Depends(get_db)):
     #blog = db.query(BlogModel).get(id)
-    blog = db.query(BlogModel).filter(BlogModel.id == id).first()
+    blog = db.query(BlogModel).filter(BlogModel.id == id).all()
     if not blog:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Blog not Fund!!!")
