@@ -10,17 +10,12 @@ class BlogSchema(BaseModel):
         orm_mode = True
 
 
-class ShowBlogTitle(BaseModel):
-    title: str
-    body: str
-
-    class Config():
-        orm_mode = True
-
-
 class UserBase(BaseModel):
     name: str
     email: str
+    
+    class Config():
+        orm_mode = True
 
 
 class UserCreate(UserBase):
@@ -38,6 +33,15 @@ class UserDetail(UserBase):
 class UserUpdate(UserBase):
     name:  Optional[str] = None
     email:  Optional[str] = None
+
+    class Config():
+        orm_mode = True
+
+
+class ShowBlogTitle(BaseModel):
+    title: str
+    body: str
+    author: UserBase
 
     class Config():
         orm_mode = True
