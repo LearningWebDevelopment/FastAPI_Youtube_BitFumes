@@ -1,11 +1,12 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from blog.database import get_db
-from blog.models import BlogModel
-from blog.schemas import BlogSchema, ShowBlogSchema, ShowBlogTitle
+from blog.repository.blog import (create_blog, delete_blog, get_all_blog,
+                                  get_blog, update_blog)
+from blog.schemas import BlogSchema, ShowBlogTitle
 
 router = APIRouter(
     prefix="/blog",
@@ -15,17 +16,17 @@ router = APIRouter(
 
 @router.get('/', response_model=List[ShowBlogTitle])
 def get_All_Blog(db: Session = Depends(get_db)):
-    blogs = db.query(BlogModel).all()
-    return blogs
+    return get_all_blog(db)
+
+
+@router.get('/{id}', status_code=200, response_model=List[ShowBlogTitle])
+def get_Blog(id: int, db: Session = Depends(get_db)):
+    return get_blog(id, db)
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
 def create_Blog(request: BlogSchema, db: Session = Depends(get_db)):
-    new_blog = BlogModel(title=request.title, body=request.body, user_id=1)
-    db.add(new_blog)
-    db.commit()
-    db.refresh(new_blog)
-    return new_blog
+    return create_blog(request, db)
 
 
 @router.delete(
@@ -37,43 +38,9 @@ def create_Blog(request: BlogSchema, db: Session = Depends(get_db)):
     }
 )
 def delete_Blog(id: int, db: Session = Depends(get_db)):
-    blog = db.query(BlogModel).filter(
-        BlogModel.id == id).delete(synchronize_session=False)
-    db.commit()
-    if not blog:
-        raise HTTPException(
-            status_code=404, detail=f"User {id} not found")
-    # blog.delete(synchronize_session=False)
-    return Response(status_code=204)
+    return delete_blog(id, db)
 
 
 @router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
 def update_Blog(id: int, request: BlogSchema, db: Session = Depends(get_db)):
-    #blog = db.query(BlogModel).filter(BlogModel.id == id)
-    blog = db.query(BlogModel).get(id)
-    if not blog:
-        raise HTTPException(
-            status_code=404, detail=f"User {id} not found")
-
-    # blog = db.query(BlogModel).filter(BlogModel.id == id).update(
-    #    {'title': request.title, 'body': request.body},
-    #    synchronize_session=False)
-    db.query(BlogModel).filter(BlogModel.id == id).update(
-        vars(request),
-        synchronize_session=False)
-    # blog.update(vars(request))
-    db.commit()
-
-    return f"Blog {id} Updated"
-
-
-@router.get('/{id}', status_code=200, response_model=List[ShowBlogTitle])
-def get_Blog(id: int, response: Response, db: Session = Depends(get_db)):
-    #blog = db.query(BlogModel).get(id)
-    blog = db.query(BlogModel).filter(BlogModel.id == id).all()
-    if not blog:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Blog not Fund!!!")
-        #response.status_code = status.HTTP_404_NOT_FOUND
-        # return {'error': 'Blog not found!!!'}
-    return blog
+    return update_blog(id, request, db)
