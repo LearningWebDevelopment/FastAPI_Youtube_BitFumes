@@ -4,6 +4,7 @@ from datetime import timedelta
 from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm.session import Session
 
 from blog.database import get_db
@@ -19,7 +20,7 @@ router = APIRouter(
 
 
 @router.post('/')
-def login(request: LoginSchema, db: Session = Depends(get_db)):
+def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(
         UserModel.email == request.username).first()
     if not user:

@@ -4,9 +4,10 @@ from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from blog.database import get_db
+from blog.oauth2 import get_current_user
 from blog.repository.blog import (create_blog, delete_blog, get_all_blog,
                                   get_blog, update_blog)
-from blog.schemas import BlogSchema, ShowBlogTitle
+from blog.schemas import BlogSchema, ShowBlogTitle, UserDetail
 
 router = APIRouter(
     prefix="/blog",
@@ -15,7 +16,7 @@ router = APIRouter(
 
 
 @router.get('/', response_model=List[ShowBlogTitle])
-def get_All_Blog(db: Session = Depends(get_db)):
+def get_All_Blog(db: Session = Depends(get_db), current_user: UserDetail = Depends(get_current_user)):
     return get_all_blog(db)
 
 
